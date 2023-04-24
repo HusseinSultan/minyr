@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Bunyamin54/funtemps/conv"
+	"github.com/HusseinSultan/funtemps/conv"
 )
 
 func ConvertTemperature() {
