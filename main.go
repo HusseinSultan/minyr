@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-
+  "github.com/HusseinSultan/funtemps/conv"
+  "github.com/HusseinSultan/funtemps"
 	"github.com/HusseinSultan/minyr/yr"
 )
 
@@ -28,7 +29,7 @@ func main() {
 		case "convert":
 			fmt.Println("Converting C values to Fahreinheit")
 
-			yr.ConvertTemperature()
+			conv.ConvertTemperature()
 
 		case "average":
 			fmt.Println("Beregning av gjennomsnittet")
