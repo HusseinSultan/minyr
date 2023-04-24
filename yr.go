@@ -1,41 +1,64 @@
-package yr
+package yr_test
 
 import (
-	"fmt"
-	"strconv"
-	//"strings"
-	//"errors"
-	"github.com/uia-worker/misc/conv"
+	"testing"
+
+	"github.com/HusseinSultan/minyr/yr"
 )
 
-func CelsiusToFahrenheitString(celsius string) (string, error) {
-	var fahrFloat float64
-	var err error
-	if celsiusFloat, err := strconv.ParseFloat(celsius, 64); err == nil {
-		fahrFloat = conv.CelsiusToFahrenheit(celsiusFloat)
+
+
+func TestCountLines(t *testing.T) {
+	type test struct {
+		input string
+		want  int
 	}
-	fahrString := fmt.Sprintf("%.1f", fahrFloat)
-	return fahrString, err
+
+	tests := []test{
+		{input: "kjevik-temp-celsius-20220318-20230318.csv", want: 16756},
+	}
+
+	for _, tc := range tests {
+		got := (tc.input)
+		if got != tc.want {
+			t.Errorf("%v: want %v, got %v,", tc.input, tc.want, got)
+		}
+	}
 }
 
-// Forutsetter at vi kjenner strukturen i filen og denne implementasjon 
-// er kun for filer som inneholder linjer hvor det fjerde element
-// på linjen er verdien for temperaturaaling i grader celsius
-func CelsiusToFahrenheitLine(line string) (string, error) {
 
-        dividedString := strings.Split(line, ";")
-	var err error
-	
-	if (len(dividedString) == 4) {
-		dividedString[3], err = CelsiusToFahrenheitString(dividedString[3])
-		if err != nil {
-			return "", err
-		}
-	} else {
-		return "", errors.New("linje har ikke forventet format")
+
+func TestConvertLines(t *testing.T) {
+
+	type test struct {
+		input string
+		want  string
 	}
-	return strings.Join(dividedString, ";"), nil
-	*/
-	
-	return "Kjevik;SN39040;18.03.2022 01:50;42.8", err
+
+	tests := []test{
+		{input: "Kjevik;SN39040;18.03.2022 01:50;6", want: "Kjevik;SN39040;18.03.2022 01:50;42.8"},
+		{input: "Kjevik;SN39040;07.03.2023 18:20;0", want: "Kjevik;SN39040;07.03.2023 18:20;32.0"},
+		{input: "Kjevik;SN39040;08.03.2023 02:20;-11", want: "Kjevik;SN39040;08.03.2023 02:20;12.2"},
+		{input: "Data er gyldig per 18.03.2023 (CC BY 4.0), Meteorologisk institutt (MET);;;",
+			want: "The date might not be up to date"},
+	}
+
+	for _, tc := range tests {
+		got := yr.ProcessLine(tc.input)
+		if !(tc.want == got) {
+			t.Errorf("expected: %v, got: %v", tc.want, got)
+		}
+	}
+}
+
+func TestGetAverageTemperature(t *testing.T) {
+	actualAvg, err := yr.GetAverageTemperature("kjevik-temp-celsius-20220318-20230318.csv", "celsius")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedAvg := "8.56"
+	if actualAvg != expectedAvg {
+		t.Errorf("expected average temperature %v, but got %v", expectedAvg, actualAvg)
+	}
 }
