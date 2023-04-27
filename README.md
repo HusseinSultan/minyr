@@ -1,2 +1,1 @@
-minyr
-IS-105 Programmeringsoppgave om filbehandling
+Oppgave Minyr IS-105
